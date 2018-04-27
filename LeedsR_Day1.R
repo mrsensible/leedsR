@@ -33,6 +33,7 @@ library(spData)
 library(devtools)
 #install_github("Nowosad/spDataLarge")
 library(spDataLarge)
+library(tidyverse)
 
 #Three packages in one uniformed package sf
 plot(world)
@@ -82,4 +83,45 @@ polygon_border <- rbind(c(1,5), c(2,2), c(4,1), c(4,4), c(1,5))
 polygon_hole   <- rbind(c(2,4), c(3,4), c(3,3), c(2,3), c(2,4))
 polygon_with_hole_list <- list(polygon_border, polygon_hole)
 st_polygon(polygon_with_hole_list)
+
+
+#########################
+##-- Day 1: Afternoon--##
+#########################
+#install.packages("osmdata")
+library(osmdata)
+packageVersion("osmdata")
+
+q0 <- opq(bbox = c(-0.27, 51.47, -0.20, 51.50)) # Chiswick Eyot in London, U.K.
+q1 <- add_osm_feature(q0, key = 'name', value = "Thames", value_exact = FALSE)
+x <- osmdata_sf(q1)
+x
+
+
+##################################
+#-- Spatial data and tidyverse --#
+##################################
+
+## Coordinate Reference System (CRS)
+# Globe -> Flat Computer screen
+world_coffee <- left_join(world, coffee_data)
+names(world_coffee)
+class(world_coffee)
+plot(world_coffee["coffee_production_2017"])
+
+coffee_renamed <- rename(coffee_data, nm = name_long)
+world_coffee2  <- left_join(world, coffee_renamed, by = c(name_long = "nm"))
+world_coffee_inner <- inner_join(world, coffee_data)
+nrow(world_coffee_inner)
+
+setdiff(coffee_data$name_long, world$name_long)
+str_subset(world$name_long, "Ivo|Cong|Vene")
+
+coffee_data_match <- mutate_if(coffee_data, is.character,
+                              recode,
+                              `Congo, Dem. Rep. of` = "Democratic Republic of the Congo",
+                              `Côte d'Ivoire` = "Ivory Coast")
+world_coffee_match <- inner_join(world, coffee_data_match)
+
+
 
