@@ -91,12 +91,20 @@ st_polygon(polygon_with_hole_list)
 #install.packages("osmdata")
 library(osmdata)
 packageVersion("osmdata")
+library(lwgeom)
+library(spDataLarge)
 
-q0 <- opq(bbox = c(-0.27, 51.47, -0.20, 51.50)) # Chiswick Eyot in London, U.K.
-q1 <- add_osm_feature(q0, key = 'name', value = "Thames", value_exact = FALSE)
-x <- osmdata_sf(q1)
-x
+?opq
 
+
+summary(bristol_ways)
+bristol_fast <- bristol_ways %>% 
+  filter(highway == "road") %>% 
+  filter(maxspeed == "70 mph" | maxspeed == "50 mph") %>% 
+  mutate(length = as.numeric(st_length(.))) %>% 
+  filter(length > 1000)
+
+#bristol_region <- osmdata::getbb("Bristol", format_out = "sf_polygon")
 
 ##################################
 #-- Spatial data and tidyverse --#
