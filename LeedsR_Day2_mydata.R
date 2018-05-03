@@ -12,5 +12,5 @@ od.seoul[] <- lapply(od.seoul, function(x) as.character(x))
 head(od.seoul)
 
 dodgr_dists(graph = od.seoul, from = origin.code.14, to = destin.2014)
-
+str(od.seoul)
 
